@@ -2,7 +2,7 @@ package runner_test
 
 import (
 	"context"
-	"github.com/csueiras/reinforcer/pkg/runner"
+	"github.com/anna-fry/reinforcer/pkg/runner"
 	"github.com/slok/goresilience"
 	"github.com/stretchr/testify/require"
 	"testing"

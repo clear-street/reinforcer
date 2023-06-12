@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	loader "github.com/csueiras/reinforcer/internal/loader"
+	loader "github.com/anna-fry/reinforcer/internal/loader"
 	mock "github.com/stretchr/testify/mock"
 )
 

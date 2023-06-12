@@ -2,7 +2,7 @@ package loader
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator/method"
+	"github.com/anna-fry/reinforcer/internal/generator/method"
 	"github.com/rs/zerolog/log"
 	"go/ast"
 	"go/types"

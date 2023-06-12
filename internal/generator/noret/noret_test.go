@@ -2,9 +2,9 @@ package noret_test
 
 import (
 	"bytes"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	"github.com/csueiras/reinforcer/internal/generator/noret"
-	rtypes "github.com/csueiras/reinforcer/internal/types"
+	"github.com/anna-fry/reinforcer/internal/generator/method"
+	"github.com/anna-fry/reinforcer/internal/generator/noret"
+	rtypes "github.com/anna-fry/reinforcer/internal/types"
 	"github.com/stretchr/testify/require"
 	"go/token"
 	"go/types"

@@ -3,8 +3,8 @@
 package mocks
 
 import (
-	generator "github.com/csueiras/reinforcer/internal/generator"
-	executor "github.com/csueiras/reinforcer/internal/generator/executor"
+	generator "github.com/anna-fry/reinforcer/internal/generator"
+	executor "github.com/anna-fry/reinforcer/internal/generator/executor"
 
 	mock "github.com/stretchr/testify/mock"
 )

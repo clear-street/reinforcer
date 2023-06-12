@@ -2,7 +2,7 @@ package retryable
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator/method"
+	"github.com/anna-fry/reinforcer/internal/generator/method"
 	"github.com/dave/jennifer/jen"
 )
 

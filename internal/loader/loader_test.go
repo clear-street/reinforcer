@@ -1,7 +1,7 @@
 package loader_test
 
 import (
-	"github.com/csueiras/reinforcer/internal/loader"
+	"github.com/anna-fry/reinforcer/internal/loader"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/packages/packagestest"
@@ -13,7 +13,7 @@ func TestLoad(t *testing.T) {
 	t.Run("Loads type from targeted file", func(t *testing.T) {
 		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{
 			{
-				Name: "github.com/csueiras",
+				Name: "github.com/anna-fry",
 				Files: map[string]interface{}{
 					"fake/fake.go": `package fake
 
@@ -26,7 +26,7 @@ type Service interface {
 				},
 			},
 			{
-				Name: "github.com/csueiras",
+				Name: "github.com/anna-fry",
 				Files: map[string]interface{}{
 					"fake/other.go": `package fake
 
@@ -46,7 +46,7 @@ type OtherService interface {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadAll(exported.File("github.com/csueiras", "fake/fake.go"), loader.FileLoadMode)
+		results, err := l.LoadAll(exported.File("github.com/anna-fry", "fake/fake.go"), loader.FileLoadMode)
 		require.NoError(t, err)
 		require.Equal(t, 1, len(results))
 		svc, ok := results["Service"]
@@ -62,7 +62,7 @@ type OtherService interface {
 
 		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{
 			{
-				Name: "github.com/csueiras",
+				Name: "github.com/anna-fry",
 				Files: map[string]interface{}{
 					"fake/fake.go": `package fake
 
@@ -82,7 +82,7 @@ type Service interface {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		svc, err := l.LoadOne("github.com/csueiras/fake", "Service", loader.PackageLoadMode)
+		svc, err := l.LoadOne("github.com/anna-fry/fake", "Service", loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, svc)
 		require.Equal(t, "Service", svc.Name)
@@ -92,7 +92,7 @@ type Service interface {
 
 	t.Run("Load Struct", func(t *testing.T) {
 		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-			Name: "github.com/csueiras",
+			Name: "github.com/anna-fry",
 			Files: map[string]interface{}{
 				"fake/fake.go": `package fake
 
@@ -113,7 +113,7 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		svc, err := l.LoadOne("github.com/csueiras/fake", "service", loader.PackageLoadMode)
+		svc, err := l.LoadOne("github.com/anna-fry/fake", "service", loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, svc)
 		require.Equal(t, "service", svc.Name)
@@ -124,7 +124,7 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 
 func TestLoadMatched(t *testing.T) {
 	exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-		Name: "github.com/csueiras",
+		Name: "github.com/anna-fry",
 		Files: map[string]interface{}{
 			"fake/fake.go": `package fake
 
@@ -155,7 +155,7 @@ type StructWithNoMethods struct {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadMatched("github.com/csueiras/fake", []string{".*Service"}, loader.PackageLoadMode)
+		results, err := l.LoadMatched("github.com/anna-fry/fake", []string{".*Service"}, loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, results)
 		require.Equal(t, 3, len(results))
@@ -179,7 +179,7 @@ type StructWithNoMethods struct {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadMatched("github.com/csueiras/fake", []string{"User.*", "Hello.*Service"}, loader.PackageLoadMode)
+		results, err := l.LoadMatched("github.com/anna-fry/fake", []string{"User.*", "Hello.*Service"}, loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, results)
 		require.Equal(t, 2, len(results))
@@ -199,7 +199,7 @@ type StructWithNoMethods struct {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadMatched("github.com/csueiras/fake", []string{"HelloWorldService"}, loader.PackageLoadMode)
+		results, err := l.LoadMatched("github.com/anna-fry/fake", []string{"HelloWorldService"}, loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, results)
 		require.Equal(t, 1, len(results))
@@ -214,7 +214,7 @@ type StructWithNoMethods struct {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadMatched("github.com/csueiras/fake", []string{"Hello"}, loader.PackageLoadMode)
+		results, err := l.LoadMatched("github.com/anna-fry/fake", []string{"Hello"}, loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, results)
 		require.Equal(t, 0, len(results))
@@ -226,7 +226,7 @@ type StructWithNoMethods struct {
 			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadMatched("github.com/csueiras/fake", []string{"UserService", "HelloWorldService", "StructWithNoMethods"}, loader.PackageLoadMode)
+		results, err := l.LoadMatched("github.com/anna-fry/fake", []string{"UserService", "HelloWorldService", "StructWithNoMethods"}, loader.PackageLoadMode)
 		require.NoError(t, err)
 		require.NotNil(t, results)
 		require.Equal(t, 2, len(results))

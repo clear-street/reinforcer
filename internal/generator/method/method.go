@@ -2,7 +2,7 @@ package method
 
 import (
 	"fmt"
-	rtypes "github.com/csueiras/reinforcer/internal/types"
+	rtypes "github.com/anna-fry/reinforcer/internal/types"
 	"github.com/dave/jennifer/jen"
 	"github.com/pkg/errors"
 	"go/types"

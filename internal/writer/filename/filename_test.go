@@ -1,7 +1,7 @@
 package filename_test
 
 import (
-	"github.com/csueiras/reinforcer/internal/writer/filename"
+	"github.com/anna-fry/reinforcer/internal/writer/filename"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

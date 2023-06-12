@@ -1,10 +1,10 @@
 package executor_test
 
 import (
-	"github.com/csueiras/reinforcer/internal/generator/executor"
-	"github.com/csueiras/reinforcer/internal/generator/executor/mocks"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	"github.com/csueiras/reinforcer/internal/loader"
+	"github.com/anna-fry/reinforcer/internal/generator/executor"
+	"github.com/anna-fry/reinforcer/internal/generator/executor/mocks"
+	"github.com/anna-fry/reinforcer/internal/generator/method"
+	"github.com/anna-fry/reinforcer/internal/loader"
 	"github.com/stretchr/testify/require"
 	"go/types"
 	"testing"
@@ -37,7 +37,7 @@ func TestExecutor_Execute(t *testing.T) {
 
 	t.Run("Loads types from packages", func(t *testing.T) {
 		l := &mocks.Loader{}
-		l.On("LoadMatched", "github.com/csueiras/somelib", []string{"MyService"}, loader.PackageLoadMode).Return(
+		l.On("LoadMatched", "github.com/anna-fry/somelib", []string{"MyService"}, loader.PackageLoadMode).Return(
 			map[string]*loader.Result{
 				"LockService": {
 					Name:    "LockService",
@@ -48,7 +48,7 @@ func TestExecutor_Execute(t *testing.T) {
 
 		exec := executor.New(l)
 		got, err := exec.Execute(&executor.Parameters{
-			SourcePackages:        []string{"github.com/csueiras/somelib"},
+			SourcePackages:        []string{"github.com/anna-fry/somelib"},
 			Targets:               []string{"MyService"},
 			OutPkg:                "testpkg",
 			IgnoreNoReturnMethods: false,

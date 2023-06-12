@@ -4,8 +4,8 @@ package executor
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/loader"
+	"github.com/anna-fry/reinforcer/internal/generator"
+	"github.com/anna-fry/reinforcer/internal/loader"
 	"github.com/pkg/errors"
 )
 
@@ -22,7 +22,7 @@ type Loader interface {
 type Parameters struct {
 	// Sources are the paths to the packages that are eligible for targeting
 	Sources []string
-	// SourcePackages are the packages that are eligible for targeting (e.g. github.com/csueiras/somelib)
+	// SourcePackages are the packages that are eligible for targeting (e.g. github.com/anna-fry/somelib)
 	SourcePackages []string
 	// Targets contains the target types to search for, these are expressions that may contain RegEx
 	Targets []string

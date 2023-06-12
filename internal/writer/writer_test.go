@@ -1,10 +1,10 @@
 package writer_test
 
 import (
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/writer"
-	"github.com/csueiras/reinforcer/internal/writer/filename"
-	wio "github.com/csueiras/reinforcer/internal/writer/io"
+	"github.com/anna-fry/reinforcer/internal/generator"
+	"github.com/anna-fry/reinforcer/internal/writer"
+	"github.com/anna-fry/reinforcer/internal/writer/filename"
+	wio "github.com/anna-fry/reinforcer/internal/writer/io"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
