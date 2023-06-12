@@ -3,7 +3,6 @@ module github.com/anna-fry/reinforcer
 go 1.13
 
 require (
-	github.com/csueiras/reinforcer v0.10.0
 	github.com/dave/jennifer v1.4.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
