@@ -2,10 +2,10 @@ package cmd_test
 
 import (
 	"bytes"
-	"github.com/csueiras/reinforcer/cmd/reinforcer/cmd"
-	"github.com/csueiras/reinforcer/cmd/reinforcer/cmd/mocks"
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/generator/executor"
+	"github.com/anna-fry/reinforcer/cmd/reinforcer/cmd"
+	"github.com/anna-fry/reinforcer/cmd/reinforcer/cmd/mocks"
+	"github.com/anna-fry/reinforcer/internal/generator"
+	"github.com/anna-fry/reinforcer/internal/generator/executor"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -37,7 +37,7 @@ func TestRootCommand(t *testing.T) {
 		exec := &mocks.Executor{}
 		exec.On("Execute", &executor.Parameters{
 			Sources:               []string{},
-			SourcePackages:        []string{"github.com/csueiras/somelib"},
+			SourcePackages:        []string{"github.com/anna-fry/somelib"},
 			Targets:               []string{"Client", "SomeOtherClient"},
 			TargetsAll:            false,
 			OutPkg:                "reinforced",
@@ -49,7 +49,7 @@ func TestRootCommand(t *testing.T) {
 		b := bytes.NewBufferString("")
 		c := cmd.NewRootCmd(exec, writ)
 		c.SetOut(b)
-		c.SetArgs([]string{"--srcpkg=github.com/csueiras/somelib", "--target=Client", "--target=SomeOtherClient", "--outputdir=./reinforced"})
+		c.SetArgs([]string{"--srcpkg=github.com/anna-fry/somelib", "--target=Client", "--target=SomeOtherClient", "--outputdir=./reinforced"})
 		require.NoError(t, c.Execute())
 	})
 

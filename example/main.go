@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/csueiras/reinforcer/example/client"
-	"github.com/csueiras/reinforcer/example/client/reinforced"
-	"github.com/csueiras/reinforcer/pkg/runner"
+	"github.com/anna-fry/reinforcer/example/client"
+	"github.com/anna-fry/reinforcer/example/client/reinforced"
+	"github.com/anna-fry/reinforcer/pkg/runner"
 	"github.com/slok/goresilience/retry"
 	"github.com/slok/goresilience/timeout"
 	"time"

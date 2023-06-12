@@ -26,10 +26,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/generator/executor"
-	"github.com/csueiras/reinforcer/internal/loader"
-	"github.com/csueiras/reinforcer/internal/writer"
+	"github.com/anna-fry/reinforcer/internal/generator"
+	"github.com/anna-fry/reinforcer/internal/generator/executor"
+	"github.com/anna-fry/reinforcer/internal/loader"
+	"github.com/anna-fry/reinforcer/internal/writer"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

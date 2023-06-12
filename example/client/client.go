@@ -5,7 +5,7 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/csueiras/reinforcer/example/client/sub"
+	"github.com/anna-fry/reinforcer/example/client/sub"
 	"math/rand"
 	"os"
 )
