@@ -2,13 +2,14 @@ package retryable_test
 
 import (
 	"bytes"
-	"github.com/anna-fry/reinforcer/internal/generator/method"
-	"github.com/anna-fry/reinforcer/internal/generator/retryable"
-	rtypes "github.com/anna-fry/reinforcer/internal/types"
-	"github.com/stretchr/testify/require"
 	"go/token"
 	"go/types"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator/method"
+	"github.com/clear-street/reinforcer/internal/generator/retryable"
+	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRetryable_Statement(t *testing.T) {

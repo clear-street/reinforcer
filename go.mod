@@ -1,4 +1,4 @@
-module github.com/anna-fry/reinforcer
+module github.com/clear-street/reinforcer
 
 go 1.13
 

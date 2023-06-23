@@ -1,12 +1,13 @@
 package writer_test
 
 import (
-	"github.com/anna-fry/reinforcer/internal/generator"
-	"github.com/anna-fry/reinforcer/internal/writer"
-	"github.com/anna-fry/reinforcer/internal/writer/filename"
-	wio "github.com/anna-fry/reinforcer/internal/writer/io"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator"
+	"github.com/clear-street/reinforcer/internal/writer"
+	"github.com/clear-street/reinforcer/internal/writer/filename"
+	wio "github.com/clear-street/reinforcer/internal/writer/io"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWriter_Write(t *testing.T) {

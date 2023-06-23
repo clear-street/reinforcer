@@ -2,10 +2,11 @@ package runner_test
 
 import (
 	"context"
-	"github.com/anna-fry/reinforcer/pkg/runner"
+	"testing"
+
+	"github.com/clear-street/reinforcer/pkg/runner"
 	"github.com/slok/goresilience"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestFactory_GetRunner(t *testing.T) {

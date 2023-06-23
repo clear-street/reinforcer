@@ -4,8 +4,8 @@ package reinforced
 
 import (
 	"context"
-	client "github.com/anna-fry/reinforcer/example/client"
-	sub "github.com/anna-fry/reinforcer/example/client/sub"
+	client "github.com/clear-street/reinforcer/example/client"
+	sub "github.com/clear-street/reinforcer/example/client/sub"
 	"os"
 )
 

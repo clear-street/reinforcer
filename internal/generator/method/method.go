@@ -2,10 +2,11 @@ package method
 
 import (
 	"fmt"
-	rtypes "github.com/anna-fry/reinforcer/internal/types"
+	"go/types"
+
+	rtypes "github.com/clear-street/reinforcer/internal/types"
 	"github.com/dave/jennifer/jen"
 	"github.com/pkg/errors"
-	"go/types"
 )
 
 const (

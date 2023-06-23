@@ -1,10 +1,11 @@
 package writer
 
 import (
-	"github.com/anna-fry/reinforcer/internal/generator"
-	"github.com/anna-fry/reinforcer/internal/writer/filename"
-	wio "github.com/anna-fry/reinforcer/internal/writer/io"
 	"path"
+
+	"github.com/clear-street/reinforcer/internal/generator"
+	"github.com/clear-street/reinforcer/internal/writer/filename"
+	wio "github.com/clear-street/reinforcer/internal/writer/io"
 )
 
 // Writer is responsible for unloading the generated code into the output

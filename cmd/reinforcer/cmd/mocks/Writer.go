@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	generator "github.com/anna-fry/reinforcer/internal/generator"
+	generator "github.com/clear-street/reinforcer/internal/generator"
 	mock "github.com/stretchr/testify/mock"
 )
 

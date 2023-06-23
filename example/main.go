@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/anna-fry/reinforcer/example/client"
-	"github.com/anna-fry/reinforcer/example/client/reinforced"
-	"github.com/anna-fry/reinforcer/pkg/runner"
+	"time"
+
+	"github.com/clear-street/reinforcer/example/client"
+	"github.com/clear-street/reinforcer/example/client/reinforced"
+	"github.com/clear-street/reinforcer/pkg/runner"
 	"github.com/slok/goresilience/retry"
 	"github.com/slok/goresilience/timeout"
-	"time"
 )
 
 func main() {

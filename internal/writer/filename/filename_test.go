@@ -1,9 +1,10 @@
 package filename_test
 
 import (
-	"github.com/anna-fry/reinforcer/internal/writer/filename"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/writer/filename"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSnakeCaseFileNameStrategy_GenerateFileName(t *testing.T) {
