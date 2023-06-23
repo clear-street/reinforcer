@@ -2,15 +2,16 @@ package loader
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	"github.com/rs/zerolog/log"
 	"go/ast"
 	"go/types"
-	"golang.org/x/tools/go/packages"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/clear-street/reinforcer/internal/generator/method"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/tools/go/packages"
 )
 
 // LoadMode determines how a path should be loaded
@@ -138,7 +139,7 @@ func (l *Loader) loadExpr(path string, expr *regexp.Regexp, mode LoadMode) (*pac
 		var targetFileIndex int
 		for idx, goFile := range goFiles {
 			if path == goFile {
-				logger.Trace().Msgf("Target file found at index %d",  idx)
+				logger.Trace().Msgf("Target file found at index %d", idx)
 				targetFileIndex = idx
 				break
 			}

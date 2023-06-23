@@ -2,13 +2,14 @@ package generator_test
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/loader"
+	"strings"
+	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator"
+	"github.com/clear-street/reinforcer/internal/loader"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/packages/packagestest"
-	"strings"
-	"testing"
 )
 
 type input struct {
@@ -249,7 +250,7 @@ package resilient
 
 import (
 	"context"
-	unresilient "github.com/csueiras/fake/unresilient"
+	unresilient "github.com/clear-street/fake/unresilient"
 )
 
 type targetService interface {
@@ -564,7 +565,7 @@ package resilient
 
 import (
 	"context"
-	unresilient "github.com/csueiras/fake/unresilient"
+	unresilient "github.com/clear-street/fake/unresilient"
 )
 
 type targetService interface {
@@ -916,7 +917,7 @@ func (g *GeneratedService) SayHello(arg0 string) error {
 }
 
 func loadInterface(t *testing.T, filesCode map[string]input) []*generator.FileConfig {
-	pkg := "github.com/csueiras/fake/unresilient"
+	pkg := "github.com/clear-street/fake/unresilient"
 	m := map[string]interface{}{}
 	for fileName, in := range filesCode {
 		m[fileName] = in.code

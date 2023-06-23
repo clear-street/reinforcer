@@ -5,9 +5,10 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/csueiras/reinforcer/example/client/sub"
 	"math/rand"
 	"os"
+
+	"github.com/clear-street/reinforcer/example/client/sub"
 )
 
 // File is a type defined in the same package that we are using for targetting

@@ -1,7 +1,7 @@
 package passthrough
 
 import (
-	"github.com/csueiras/reinforcer/internal/generator/method"
+	"github.com/clear-street/reinforcer/internal/generator/method"
 	"github.com/dave/jennifer/jen"
 )
 

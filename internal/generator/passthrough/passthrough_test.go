@@ -2,13 +2,14 @@ package passthrough_test
 
 import (
 	"bytes"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	"github.com/csueiras/reinforcer/internal/generator/passthrough"
-	rtypes "github.com/csueiras/reinforcer/internal/types"
-	"github.com/stretchr/testify/require"
 	"go/token"
 	"go/types"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator/method"
+	"github.com/clear-street/reinforcer/internal/generator/passthrough"
+	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPassThrough_Statement(t *testing.T) {

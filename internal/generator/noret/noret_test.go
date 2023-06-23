@@ -2,13 +2,14 @@ package noret_test
 
 import (
 	"bytes"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	"github.com/csueiras/reinforcer/internal/generator/noret"
-	rtypes "github.com/csueiras/reinforcer/internal/types"
-	"github.com/stretchr/testify/require"
 	"go/token"
 	"go/types"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator/method"
+	"github.com/clear-street/reinforcer/internal/generator/noret"
+	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNoReturn_Statement(t *testing.T) {

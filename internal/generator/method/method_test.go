@@ -2,13 +2,14 @@ package method_test
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator/method"
-	rtypes "github.com/csueiras/reinforcer/internal/types"
-	"github.com/dave/jennifer/jen"
-	"github.com/stretchr/testify/require"
 	"go/token"
 	"go/types"
 	"testing"
+
+	"github.com/clear-street/reinforcer/internal/generator/method"
+	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/dave/jennifer/jen"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewMethod(t *testing.T) {

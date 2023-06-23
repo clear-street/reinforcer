@@ -26,17 +26,18 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/csueiras/reinforcer/internal/generator"
-	"github.com/csueiras/reinforcer/internal/generator/executor"
-	"github.com/csueiras/reinforcer/internal/loader"
-	"github.com/csueiras/reinforcer/internal/writer"
+	"os"
+	"path"
+
+	"github.com/clear-street/reinforcer/internal/generator"
+	"github.com/clear-street/reinforcer/internal/generator/executor"
+	"github.com/clear-street/reinforcer/internal/loader"
+	"github.com/clear-street/reinforcer/internal/writer"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"path"
 )
 
 // Version will be set in CI to the current released version

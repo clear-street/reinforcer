@@ -22,7 +22,7 @@
 
 package main
 
-import "github.com/csueiras/reinforcer/cmd/reinforcer/cmd"
+import "github.com/clear-street/reinforcer/cmd/reinforcer/cmd"
 
 func main() {
 	cmd.Execute()
