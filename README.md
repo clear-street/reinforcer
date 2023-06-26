@@ -1,9 +1,9 @@
 # reinforcer
 
-![Tests](https://github.com/csueiras/reinforcer/workflows/run%20tests/badge.svg?branch=develop)
-[![Coverage Status](https://coveralls.io/repos/github/csueiras/reinforcer/badge.svg?branch=develop)](https://coveralls.io/github/csueiras/reinforcer?branch=develop)
-[![Go Report Card](https://goreportcard.com/badge/github.com/csueiras/reinforcer)](https://goreportcard.com/report/github.com/csueiras/reinforcer)
-[![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/csueiras/reinforcer?include_prereleases&sort=semver)](https://github.com/csueiras/reinforcer/releases)
+![Tests](https://github.com/clear-street/reinforcer/workflows/run%20tests/badge.svg?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/clear-street/reinforcer/badge.svg?branch=develop)](https://coveralls.io/github/clear-street/reinforcer?branch=develop)
+[![Go Report Card](https://goreportcard.com/badge/github.com/clear-street/reinforcer)](https://goreportcard.com/report/github.com/clear-street/reinforcer)
+[![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/clear-street/reinforcer?include_prereleases&sort=semver)](https://github.com/clear-street/reinforcer/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Reinforcer is a code generation tool that automates middleware injection in a proxy service that fronts your delegate
@@ -17,15 +17,15 @@ be enumerated here starting with version 0.7.0 and forward._
 
 ### Releases
 
-Visit the [releases page](https://github.com/csueiras/reinforcer/releases) for pre-built binaries for OS X, Linux and
+Visit the [releases page](https://github.com/clear-street/reinforcer/releases) for pre-built binaries for OS X, Linux and
 Windows.
 
 ### Docker
 
-Use the [Docker Image](https://hub.docker.com/r/csueiras/reinforcer):
+Use the [Docker Image](https://hub.docker.com/r/clear-street/reinforcer):
 
 ```
-docker pull csueiras/reinforcer
+docker pull clear-street/reinforcer
 ```
 
 ### Homebrew
@@ -33,13 +33,13 @@ docker pull csueiras/reinforcer
 Install through [Homebrew](https://brew.sh/)
 
 ```
-brew tap csueiras/reinforcer && brew install reinforcer
+brew tap clear-street/reinforcer && brew install reinforcer
 ```
 
 #### Upgrading
 
 ```
-brew upgrade csueiras/reinforcer/reinforcer
+brew upgrade clear-street/reinforcer/reinforcer
 ```
 
 ## Usage

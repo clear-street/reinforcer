@@ -9,7 +9,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/csueiras/reinforcer/cmd/reinforcer/cmd.Version={{.Version}}
+      - -s -w -X github.com/clear-street/reinforcer/cmd/reinforcer/cmd.Version={{.Version}}
     goos:
       - linux
       - windows
@@ -43,10 +43,10 @@ dockers:
     ids:
       - reinforcer
     image_templates:
-      - 'csueiras/reinforcer:{{ .Tag }}'
-      - 'csueiras/reinforcer:v{{ .Major }}'
-      - 'csueiras/reinforcer:v{{ .Major }}.{{ .Minor }}'
-      - 'csueiras/reinforcer:latest'
+      - 'clear-street/reinforcer:{{ .Tag }}'
+      - 'clear-street/reinforcer:v{{ .Major }}'
+      - 'clear-street/reinforcer:v{{ .Major }}.{{ .Minor }}'
+      - 'clear-street/reinforcer:latest'
     build_flag_templates:
       - "--pull"
       - "--label=org.opencontainers.image.created={{.Date}}"
@@ -56,10 +56,10 @@ dockers:
       - "--label=org.opencontainers.image.source={{.GitURL}}"
 
 brews:
-  - homepage: https://github.com/csueiras/reinforcer
+  - homepage: https://github.com/clear-street/reinforcer
     description: "Codegen tool for easy adoption of resiliency patterns in Go"
     tap:
-      owner: csueiras
+      owner: clear-street
       name: homebrew-reinforcer
     folder: Formula
     test: |
