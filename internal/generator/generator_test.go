@@ -2,13 +2,12 @@ package generator_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/clear-street/reinforcer/internal/generator"
 	"github.com/clear-street/reinforcer/internal/loader"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/packages/packagestest"
 )
@@ -939,12 +938,15 @@ func loadInterface(t *testing.T, filesCode map[string]input) []*generator.FileCo
 	})
 
 	var loadedTypes []*generator.FileConfig
-	titleCaser := cases.Title(language.AmericanEnglish)
 	for _, in := range filesCode {
 		svc, err := l.LoadOne(pkg, in.interfaceName, loader.PackageLoadMode)
 		require.NoError(t, err)
+		// cannot use cases.Title as it will lowercase MyService to Myservice
+		if len(in.interfaceName) > 0 {
+			in.interfaceName = strings.ToUpper(string(in.interfaceName[0])) + in.interfaceName[1:]
+		}
 		loadedTypes = append(loadedTypes, generator.NewFileConfig(in.interfaceName,
-			fmt.Sprintf("Generated%s", titleCaser.String(in.interfaceName)),
+			fmt.Sprintf("Generated%s", in.interfaceName),
 			svc.Methods,
 		))
 	}
