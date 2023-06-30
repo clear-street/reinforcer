@@ -78,7 +78,7 @@ func TestExecutor_Execute(t *testing.T) {
 }
 
 func createTestServiceMethods() []*method.Method {
-	nullary := types.NewSignature(nil, nil, nil, false) // func()
+	nullary := types.NewSignatureType(nil, nil, nil, nil, nil, false) // func()
 	return []*method.Method{
 		method.MustParseMethod("Lock", nullary),
 		method.MustParseMethod("Unlock", nullary),

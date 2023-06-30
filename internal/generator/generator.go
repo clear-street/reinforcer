@@ -27,9 +27,16 @@ type FileConfig struct {
 
 // NewFileConfig creates a new instance of the FileConfig which holds code generation configuration
 func NewFileConfig(srcTypeName, outTypeName string, methods []*method.Method) *FileConfig {
+	// cannot use cases.Title as it will lowercase MyService to Myservice
+	if len(srcTypeName) > 0 {
+		srcTypeName = strings.ToUpper(string(srcTypeName[0])) + srcTypeName[1:]
+	}
+	if len(outTypeName) > 0 {
+		outTypeName = strings.ToUpper(string(outTypeName[0])) + outTypeName[1:]
+	}
 	return &FileConfig{
-		srcTypeName: strings.Title(srcTypeName),
-		outTypeName: strings.Title(outTypeName),
+		srcTypeName: srcTypeName,
+		outTypeName: outTypeName,
 		methods:     methods,
 	}
 }

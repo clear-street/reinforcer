@@ -2,6 +2,7 @@ package types
 
 import (
 	"go/types"
+
 	"golang.org/x/tools/go/packages"
 )
 
@@ -14,7 +15,9 @@ var ContextType *types.Interface
 func init() {
 	errType := types.NewInterfaceType([]*types.Func{
 		types.NewFunc(0, nil, "Error",
-			types.NewSignature(
+			types.NewSignatureType(
+				nil,
+				nil,
 				nil,
 				types.NewTuple(),
 				types.NewTuple(types.NewParam(0, nil, "", types.Typ[types.String])),
@@ -36,8 +39,7 @@ func init() {
 		Scope().
 		Lookup("Context").
 		Type().(*types.Named).
-		Underlying().
-		(*types.Interface)
+		Underlying().(*types.Interface)
 }
 
 // IsErrorType determines if the given type implements the Error interface

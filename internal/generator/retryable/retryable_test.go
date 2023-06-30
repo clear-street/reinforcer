@@ -26,7 +26,7 @@ func TestRetryable_Statement(t *testing.T) {
 		{
 			name:       "Function returns error",
 			methodName: "MyFunction",
-			signature:  types.NewSignature(nil, types.NewTuple(), types.NewTuple(errVar), false),
+			signature:  types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(errVar), false),
 			want: `func (r *Resilient) MyFunction() error {
 	var nonRetryableErr error
 	err := r.run(context.Background(), ResilientMethods.MyFunction, func(_ context.Context) error {
@@ -48,7 +48,7 @@ func TestRetryable_Statement(t *testing.T) {
 		{
 			name:       "Function returns string and error",
 			methodName: "MyFunction",
-			signature:  types.NewSignature(nil, types.NewTuple(), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String]), errVar), false),
+			signature:  types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String]), errVar), false),
 			want: `func (r *Resilient) MyFunction() (string, error) {
 	var nonRetryableErr error
 	var r0 string
@@ -71,7 +71,7 @@ func TestRetryable_Statement(t *testing.T) {
 		{
 			name:       "Function passes arguments",
 			methodName: "MyFunction",
-			signature: types.NewSignature(nil, types.NewTuple(
+			signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 				ctxVar,
 				types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 			), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String]), errVar), false),
@@ -119,7 +119,7 @@ func TestRetryable_Statement(t *testing.T) {
 
 	t.Run("Function does not return error", func(t *testing.T) {
 		require.Panics(t, func() {
-			m, err := method.ParseMethod("Fn", types.NewSignature(nil, types.NewTuple(), types.NewTuple(), false))
+			m, err := method.ParseMethod("Fn", types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false))
 			require.NoError(t, err)
 			retryable.NewRetryable(m, "Resilient", "r")
 		})
