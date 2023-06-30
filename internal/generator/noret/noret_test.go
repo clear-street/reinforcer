@@ -25,7 +25,7 @@ func TestNoReturn_Statement(t *testing.T) {
 		{
 			name:       "MyFunction()",
 			methodName: "MyFunction",
-			signature:  types.NewSignature(nil, types.NewTuple(), types.NewTuple(), false),
+			signature:  types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false),
 			want: `func (r *Resilient) MyFunction() {
 	err := r.run(context.Background(), ResilientMethods.MyFunction, func(_ context.Context) error {
 		r.delegate.MyFunction()
@@ -40,7 +40,7 @@ func TestNoReturn_Statement(t *testing.T) {
 		{
 			name:       "MyFunction(ctx context.Context, arg1 string)",
 			methodName: "MyFunction",
-			signature: types.NewSignature(nil, types.NewTuple(
+			signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 				ctxVar,
 				types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 			), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String])), false),

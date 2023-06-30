@@ -25,7 +25,7 @@ func TestPassThrough_Statement(t *testing.T) {
 		{
 			name:       "Function arguments and returns",
 			methodName: "MyFunction",
-			signature: types.NewSignature(nil, types.NewTuple(
+			signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 				ctxVar,
 				types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 			), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String])), false),
@@ -37,7 +37,7 @@ func TestPassThrough_Statement(t *testing.T) {
 		{
 			name:       "Function passes arguments",
 			methodName: "MyFunction",
-			signature: types.NewSignature(nil, types.NewTuple(
+			signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 				ctxVar,
 				types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 			), types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.String])), false),
@@ -49,7 +49,7 @@ func TestPassThrough_Statement(t *testing.T) {
 		{
 			name:       "Function no args no return",
 			methodName: "MyFunction",
-			signature:  types.NewSignature(nil, types.NewTuple(), types.NewTuple(), false),
+			signature:  types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false),
 			want: `func (r *resilient) MyFunction() {
 	r.delegate.MyFunction()
 }`,

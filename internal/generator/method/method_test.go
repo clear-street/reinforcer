@@ -31,7 +31,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn()",
 			args: args{
 				name:      "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(), types.NewTuple(), false),
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false),
 			},
 			want: &method.Method{
 				Name:                  "Fn",
@@ -44,7 +44,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(arg string)",
 			args: args{
 				name:      "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String])), types.NewTuple(), false),
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String])), types.NewTuple(), false),
 			},
 			want: &method.Method{
 				Name:                  "Fn",
@@ -57,7 +57,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(args ...string)",
 			args: args{
 				name:      "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(types.NewVar(token.NoPos, nil, "args", types.NewSlice(types.Typ[types.String]))), types.NewTuple(), true),
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(types.NewVar(token.NoPos, nil, "args", types.NewSlice(types.Typ[types.String]))), types.NewTuple(), true),
 			},
 			want: &method.Method{
 				Name:                  "Fn",
@@ -70,7 +70,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(arg0 string, args ...string)",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil,
+				signature: types.NewSignatureType(nil, nil, nil,
 					types.NewTuple(types.NewVar(token.NoPos, nil, "arg0", types.Typ[types.String]), types.NewVar(token.NoPos, nil, "args", types.NewSlice(types.Typ[types.String]))), types.NewTuple(), true),
 			},
 			want: &method.Method{
@@ -85,7 +85,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(ctx context.Context, arg1 string)",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 					ctxVar,
 					types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 				), types.NewTuple(), false),
@@ -104,7 +104,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(ctx context.Context, arg1 string) error",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 					ctxVar,
 					types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 				), types.NewTuple(types.NewVar(token.NoPos, nil, "", rtypes.ErrType)), false),
@@ -122,8 +122,8 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(arg0 func() (string, error))",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(
-					types.NewVar(token.NoPos, nil, "myArg", types.NewSignature(nil, types.NewTuple(), types.NewTuple(
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
+					types.NewVar(token.NoPos, nil, "myArg", types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(
 						types.NewVar(token.NoPos, nil, "", types.Typ[types.String]),
 						types.NewVar(token.NoPos, nil, "", rtypes.ErrType),
 					), false)),
@@ -144,7 +144,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(ctx context.Context, arg1 string) (string, error)",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil, types.NewTuple(
+				signature: types.NewSignatureType(nil, nil, nil, types.NewTuple(
 					ctxVar,
 					types.NewVar(token.NoPos, nil, "myArg", types.Typ[types.String]),
 				), types.NewTuple(
@@ -165,7 +165,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(arg interface{}) interface{}",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil,
+				signature: types.NewSignatureType(nil, nil, nil,
 					types.NewTuple(types.NewVar(token.NoPos, nil, "arg", types.NewInterfaceType(nil, nil))),
 					types.NewTuple(types.NewVar(token.NoPos, nil, "", types.NewInterfaceType(nil, nil))),
 					false),
@@ -182,7 +182,7 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(arg map[string]interface{}) map[string]int",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil,
+				signature: types.NewSignatureType(nil, nil, nil,
 					types.NewTuple(types.NewVar(token.NoPos, nil, "arg", types.NewMap(types.Typ[types.String], types.NewInterfaceType(nil, nil)))),
 					types.NewTuple(types.NewVar(token.NoPos, nil, "", types.NewMap(types.Typ[types.String], types.Typ[types.Int]))),
 					false),
@@ -199,10 +199,10 @@ func TestNewMethod(t *testing.T) {
 			name: "Fn(argFn func(arg string)bool)",
 			args: args{
 				name: "Fn",
-				signature: types.NewSignature(nil,
+				signature: types.NewSignatureType(nil, nil, nil,
 					types.NewTuple(
 						types.NewVar(token.NoPos, nil, "argFn",
-							types.NewSignature(
+							types.NewSignatureType(nil, nil,
 								nil,
 								types.NewTuple(types.NewVar(token.NoPos, nil, "arg", types.Typ[types.String])),
 								types.NewTuple(types.NewVar(token.NoPos, nil, "", types.Typ[types.Bool])),
