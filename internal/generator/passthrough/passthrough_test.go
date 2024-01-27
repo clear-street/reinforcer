@@ -9,6 +9,7 @@ import (
 	"github.com/clear-street/reinforcer/internal/generator/method"
 	"github.com/clear-street/reinforcer/internal/generator/passthrough"
 	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/dave/jennifer/jen"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,11 +17,12 @@ func TestPassThrough_Statement(t *testing.T) {
 	ctxVar := types.NewVar(token.NoPos, nil, "ctx", rtypes.ContextType)
 
 	tests := []struct {
-		name       string
-		methodName string
-		signature  *types.Signature
-		want       string
-		wantErr    bool
+		name           string
+		methodName     string
+		structTypeArgs []jen.Code
+		signature      *types.Signature
+		want           string
+		wantErr        bool
 	}{
 		{
 			name:       "Function arguments and returns",
@@ -55,13 +57,23 @@ func TestPassThrough_Statement(t *testing.T) {
 }`,
 			wantErr: false,
 		},
+		{
+			name:           "struct type args",
+			methodName:     "MyFunction",
+			structTypeArgs: []jen.Code{jen.Id("T")},
+			signature:      types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false),
+			want: `func (r *resilient[T]) MyFunction() {
+	r.delegate.MyFunction()
+}`,
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m, err := method.ParseMethod(tt.methodName, tt.signature)
 			require.NoError(t, err)
-			ret := passthrough.NewPassThrough(m, "resilient", "r")
+			ret := passthrough.NewPassThrough(m, "resilient", tt.structTypeArgs, "r")
 			buf := &bytes.Buffer{}
 			s, err := ret.Statement()
 			if tt.wantErr {

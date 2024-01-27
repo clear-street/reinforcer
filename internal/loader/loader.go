@@ -10,6 +10,8 @@ import (
 	"unicode"
 
 	"github.com/clear-street/reinforcer/internal/generator/method"
+	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/dave/jennifer/jen"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/tools/go/packages"
 )
@@ -53,8 +55,10 @@ func (l *LoadingError) Error() string {
 
 // Result holds the results of loading a particular type
 type Result struct {
-	Name    string
-	Methods []*method.Method
+	Name       string
+	TypeParams []jen.Code
+	TypeArgs   []jen.Code
+	Methods    []*method.Method
 }
 
 // Loader is a utility service for extracting type information from a go package
@@ -173,7 +177,7 @@ func (l *Loader) loadExpr(path string, expr *regexp.Regexp, mode LoadMode) (*pac
 		switch typ := obj.Type().Underlying().(type) {
 		case *types.Interface:
 			logger.Info().Msgf("Discovered interface type %s", typeFound)
-			result, err := loadFromInterface(typeFound, typ)
+			result, err := loadFromInterface(typeFound, typ, obj.Type())
 			if err != nil {
 				return nil, nil, err
 			}
@@ -223,9 +227,20 @@ func (l *Loader) load(path string, mode LoadMode) ([]*packages.Package, error) {
 	return pkgs, nil
 }
 
-func loadFromInterface(name string, interfaceType *types.Interface) (*Result, error) {
+func loadFromInterface(name string, interfaceType *types.Interface, objType types.Type) (*Result, error) {
 	result := &Result{
 		Name: name,
+	}
+	typeParams := objType.(*types.Named).TypeParams()
+	for p := 0; p < typeParams.Len(); p++ {
+		typeParam := typeParams.At(p)
+		typeParamName := typeParam.Obj().Name()
+		typ, err := rtypes.ToType(typeParam.Constraint(), false)
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert type parameter %s; error=%w", typeParamName, err)
+		}
+		result.TypeParams = append(result.TypeParams, jen.Id(typeParamName).Add(typ))
+		result.TypeArgs = append(result.TypeArgs, jen.Id(typeParamName))
 	}
 	for m := 0; m < interfaceType.NumMethods(); m++ {
 		meth := interfaceType.Method(m)
@@ -254,10 +269,19 @@ func loadFromStruct(f *ast.File, name string, info *types.Info) (*Result, error)
 		for _, l := range fn.Recv.List {
 			var ident *ast.Ident
 			switch t := l.Type.(type) {
-			case *ast.StarExpr:
-				ident = t.X.(*ast.Ident)
 			case *ast.Ident:
 				ident = t
+			case *ast.StarExpr:
+				switch t := t.X.(type) {
+				case *ast.Ident:
+					ident = t
+				case *ast.IndexExpr:
+					// single type parameter
+					ident = t.X.(*ast.Ident)
+				case *ast.IndexListExpr:
+					// multiple type parameters
+					ident = t.X.(*ast.Ident)
+				}
 			}
 
 			if ident == nil || ident.Name != name {

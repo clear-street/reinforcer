@@ -7,17 +7,19 @@ import (
 
 // NoReturn is a code generator that injects the middleware to delegates that don't return anything
 type NoReturn struct {
-	method       *method.Method
-	structName   string
-	receiverName string
+	method         *method.Method
+	structName     string
+	structTypeArgs []jen.Code
+	receiverName   string
 }
 
 // NewNoReturn is a ctor for NoReturn
-func NewNoReturn(method *method.Method, structName string, receiverName string) *NoReturn {
+func NewNoReturn(method *method.Method, structName string, structTypeArgs []jen.Code, receiverName string) *NoReturn {
 	return &NoReturn{
-		method:       method,
-		structName:   structName,
-		receiverName: receiverName,
+		method:         method,
+		structName:     structName,
+		structTypeArgs: structTypeArgs,
+		receiverName:   receiverName,
 	}
 }
 
@@ -35,7 +37,7 @@ func (p *NoReturn) Statement() (*jen.Statement, error) {
 		jen.Return(jen.Nil()),
 	)
 
-	return jen.Func().Params(jen.Id(p.receiverName).Op("*").Id(p.structName)).Id(p.method.Name).Call(methodArgParams...).Block(
+	return jen.Func().Params(jen.Id(p.receiverName).Op("*").Id(p.structName).Types(p.structTypeArgs...)).Id(p.method.Name).Call(methodArgParams...).Block(
 		jen.Id("err").Op(":=").Id(p.receiverName).Dot("run").Call(ctxParam, p.method.ConstantRef(p.structName), call),
 		jen.If(jen.Id("err").Op("!=").Nil()).Block(
 			jen.Panic(jen.Id("err")),

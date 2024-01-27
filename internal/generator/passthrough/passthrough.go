@@ -7,17 +7,19 @@ import (
 
 // PassThrough is a code generator that injects no middleware and acts a simple fall through call to the delegate
 type PassThrough struct {
-	method       *method.Method
-	structName   string
-	receiverName string
+	method         *method.Method
+	structName     string
+	structTypeArgs []jen.Code
+	receiverName   string
 }
 
 // NewPassThrough is a ctor for PassThrough
-func NewPassThrough(method *method.Method, structName string, receiverName string) *PassThrough {
+func NewPassThrough(method *method.Method, structName string, structTypeArgs []jen.Code, receiverName string) *PassThrough {
 	return &PassThrough{
-		method:       method,
-		structName:   structName,
-		receiverName: receiverName,
+		method:         method,
+		structName:     structName,
+		structTypeArgs: structTypeArgs,
+		receiverName:   receiverName,
 	}
 }
 
@@ -34,7 +36,7 @@ func (p *PassThrough) Statement() (*jen.Statement, error) {
 		block = append(block, delegateCall)
 	}
 
-	return jen.Func().Params(jen.Id(p.receiverName).Op("*").Id(p.structName)).Id(p.method.Name).Call(methodArgParams...).Block(
+	return jen.Func().Params(jen.Id(p.receiverName).Op("*").Id(p.structName).Types(p.structTypeArgs...)).Id(p.method.Name).Call(methodArgParams...).Block(
 		block...,
 	), nil
 }

@@ -6,16 +6,11 @@ import (
 
 	rtypes "github.com/clear-street/reinforcer/internal/types"
 	"github.com/dave/jennifer/jen"
-	"github.com/pkg/errors"
 )
 
 const (
 	ctxVarName = "ctx"
 )
-
-type named interface {
-	Name() string
-}
 
 // Method holds all of the data for code generation on a specific method signature
 type Method struct {
@@ -23,6 +18,7 @@ type Method struct {
 	HasContext            bool
 	ReturnsError          bool
 	HasVariadic           bool
+	GenericsNameAndType   []jen.Code
 	ParameterNames        []string
 	ParametersNameAndType []jen.Code
 	ReturnTypes           []jen.Code
@@ -94,7 +90,7 @@ func ParseMethod(name string, signature *types.Signature) (*Method, error) {
 		} else {
 			paramName := fmt.Sprintf("arg%d", i)
 
-			paramType, err := toType(param.Type(), isVariadic && i == lastIndex)
+			paramType, err := rtypes.ToType(param.Type(), isVariadic && i == lastIndex)
 			if err != nil {
 				return nil, fmt.Errorf("failed to convert type=%v; error=%w", param.Type(), err)
 			}
@@ -104,7 +100,7 @@ func ParseMethod(name string, signature *types.Signature) (*Method, error) {
 	}
 	for i := 0; i < signature.Results().Len(); i++ {
 		res := signature.Results().At(i)
-		resType, err := toType(res.Type(), false)
+		resType, err := rtypes.ToType(res.Type(), false)
 		if err != nil {
 			panic(err)
 		}
@@ -119,116 +115,4 @@ func ParseMethod(name string, signature *types.Signature) (*Method, error) {
 		m.ReturnTypes = append(m.ReturnTypes, resType)
 	}
 	return m, nil
-}
-
-// variadicToType generates the representation for a variadic type "...MyType"
-func variadicToType(t types.Type) (jen.Code, error) {
-	sliceType, ok := t.(*types.Slice)
-	if !ok {
-		return nil, fmt.Errorf("expected type to be *types.Slice, got=%T", t)
-	}
-	sliceElemType, err := toType(sliceType.Elem(), false)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert slice's type; error=%w", err)
-	}
-	return jen.Op("...").Add(sliceElemType), nil
-}
-
-// toType generates the representation for the given type
-func toType(t types.Type, variadic bool) (jen.Code, error) {
-	if variadic {
-		return variadicToType(t)
-	}
-
-	switch v := t.(type) {
-	case *types.Basic:
-		return jen.Id(v.Name()), nil
-	case *types.Chan:
-		rt, err := toType(v.Elem(), false)
-		if err != nil {
-			return nil, err
-		}
-		switch v.Dir() {
-		case types.SendRecv:
-			return jen.Chan().Add(rt), nil
-		case types.RecvOnly:
-			return jen.Op("<-").Chan().Add(rt), nil
-		default:
-			return jen.Chan().Op("<-").Add(rt), nil
-		}
-	case *types.Named:
-		typeName := v.Obj()
-		if _, ok := v.Underlying().(*types.Interface); ok {
-			if typeName.Pkg() != nil {
-				pkgPath := typeName.Pkg().Path()
-				return jen.Qual(
-					pkgPath,
-					typeName.Name(),
-				), nil
-			}
-			return jen.Id(typeName.Name()), nil
-		}
-		pkgPath := typeName.Pkg().Path()
-		return jen.Qual(
-			pkgPath,
-			typeName.Name(),
-		), nil
-	case *types.Pointer:
-		rt, err := toType(v.Elem(), false)
-		if err != nil {
-			return nil, err
-		}
-		return jen.Op("*").Add(rt), nil
-	case *types.Interface:
-		return jen.Id("interface{}"), nil
-	case *types.Slice:
-		elemType, err := toType(v.Elem(), false)
-		if err != nil {
-			return nil, err
-		}
-		return jen.Index().Add(elemType), nil
-	case named:
-		return jen.Id(v.Name()), nil
-	case *types.Map:
-		keyType, err := toType(v.Key(), false)
-		if err != nil {
-			return nil, err
-		}
-		elemType, err := toType(v.Elem(), false)
-		if err != nil {
-			return nil, err
-		}
-		return jen.Map(keyType).Add(elemType), nil
-	case *types.Signature:
-		fnVariadic := v.Variadic()
-		var paramTypes []jen.Code
-		lastIndex := v.Params().Len() - 1
-		for p := 0; p < v.Params().Len(); p++ {
-			paramType := v.Params().At(p).Type()
-			tt, err := toType(paramType, lastIndex == p && fnVariadic)
-			if err != nil {
-				return nil, errors.Wrapf(err, "failed to convert type %v", paramType)
-			}
-			paramTypes = append(paramTypes, tt)
-		}
-
-		var returnTypes []jen.Code
-		for r := 0; r < v.Results().Len(); r++ {
-			returnType := v.Results().At(r).Type()
-			tt, err := toType(returnType, false)
-			if err != nil {
-				return nil, errors.Wrapf(err, "failed to convert type %v", returnType)
-			}
-			returnTypes = append(returnTypes, tt)
-		}
-		if len(returnTypes) == 0 {
-			return jen.Func().Params(paramTypes...), nil
-		}
-		if len(returnTypes) > 1 {
-			return jen.Func().Params(paramTypes...).Parens(jen.List(returnTypes...)), nil
-		}
-		return jen.Func().Params(paramTypes...).Add(returnTypes[0]), nil
-	default:
-		return nil, fmt.Errorf("type not handled: %T", v)
-	}
 }
