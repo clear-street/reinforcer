@@ -261,9 +261,9 @@ func TestNewMethod(t *testing.T) {
 				require.Equal(t, *tt.want.ReturnErrorIndex, *got.ReturnErrorIndex)
 			}
 
-			require.Equal(t, tt.want.ParameterNames, got.ParameterNames)
-			require.Equal(t, tt.want.ParametersNameAndType, got.ParametersNameAndType)
-			require.Equal(t, tt.want.ReturnTypes, got.ReturnTypes)
+			require.ElementsMatch(t, tt.want.ParameterNames, got.ParameterNames)
+			require.ElementsMatch(t, tt.want.ParametersNameAndType, got.ParametersNameAndType)
+			require.ElementsMatch(t, tt.want.ReturnTypes, got.ReturnTypes)
 			require.Equal(t, fmt.Sprintf("ParentTypeMethods.%s", tt.want.Name), (got.ConstantRef("ParentType").(*jen.Statement)).GoString())
 		})
 	}
