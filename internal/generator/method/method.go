@@ -18,7 +18,6 @@ type Method struct {
 	HasContext            bool
 	ReturnsError          bool
 	HasVariadic           bool
-	GenericsNameAndType   []jen.Code
 	ParameterNames        []string
 	ParametersNameAndType []jen.Code
 	ReturnTypes           []jen.Code
