@@ -14,6 +14,12 @@ import (
 
 func TestNewMethod(t *testing.T) {
 	ctxVar := types.NewVar(token.NoPos, nil, "ctx", rtypes.ContextType)
+	typedType, _ := types.Instantiate(
+		types.NewContext(),
+		types.NewNamed(types.NewTypeName(token.NoPos, types.NewPackage("github.com/clear-street/fake", "fake"), "genericType", nil), types.NewStruct(nil, nil), nil),
+		[]types.Type{types.Typ[types.String]},
+		false,
+	)
 	zero := new(int)
 	*zero = 0
 
@@ -174,8 +180,8 @@ func TestNewMethod(t *testing.T) {
 				Name:                  "Fn",
 				HasContext:            false,
 				ParameterNames:        []string{"arg0"},
-				ParametersNameAndType: []jen.Code{jen.Id("arg0").Add(jen.Id("interface{}"))},
-				ReturnTypes:           []jen.Code{jen.Id("interface{}")},
+				ParametersNameAndType: []jen.Code{jen.Id("arg0").Add(jen.Id("any"))},
+				ReturnTypes:           []jen.Code{jen.Id("any")},
 			},
 		},
 		{
@@ -191,7 +197,7 @@ func TestNewMethod(t *testing.T) {
 				Name:                  "Fn",
 				HasContext:            false,
 				ParameterNames:        []string{"arg0"},
-				ParametersNameAndType: []jen.Code{jen.Id("arg0").Add(jen.Map(jen.Id("string")).Add(jen.Id("interface{}")))},
+				ParametersNameAndType: []jen.Code{jen.Id("arg0").Add(jen.Map(jen.Id("string")).Add(jen.Id("any")))},
 				ReturnTypes:           []jen.Code{jen.Map(jen.Id("string")).Add(jen.Id("int"))},
 			},
 		},
@@ -220,6 +226,23 @@ func TestNewMethod(t *testing.T) {
 				ParametersNameAndType: []jen.Code{
 					jen.Id("arg0").Add(jen.Func().Params(jen.String()).Add(jen.Bool()))},
 				ReturnTypes: []jen.Code{jen.Map(jen.Id("string")).Add(jen.Id("int"))},
+			},
+		},
+		{
+			name: "Fn(arg genericType[string])",
+			args: args{
+				name: "Fn",
+				signature: types.NewSignatureType(nil, nil, nil,
+					types.NewTuple(types.NewVar(token.NoPos, nil, "arg", typedType)),
+					types.NewTuple(),
+					false),
+			},
+			want: &method.Method{
+				Name:                  "Fn",
+				HasContext:            false,
+				ParameterNames:        []string{"arg0"},
+				ParametersNameAndType: []jen.Code{jen.Id("arg0").Add(jen.Qual("github.com/clear-street/fake", "genericType").Types(jen.String()))},
+				ReturnTypes:           []jen.Code{},
 			},
 		},
 	}

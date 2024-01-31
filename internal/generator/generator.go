@@ -21,12 +21,16 @@ type FileConfig struct {
 	srcTypeName string
 	// outTypeName is the desired output type name
 	outTypeName string
+	// typeParams is the list of generic type parameters
+	typeParams []jen.Code
+	// typeArgs is the list of generic type arguments
+	typeArgs []jen.Code
 	// methods that should be in the generated type
 	methods []*method.Method
 }
 
 // NewFileConfig creates a new instance of the FileConfig which holds code generation configuration
-func NewFileConfig(srcTypeName, outTypeName string, methods []*method.Method) *FileConfig {
+func NewFileConfig(srcTypeName, outTypeName string, typeParams []jen.Code, typeArgs []jen.Code, methods []*method.Method) *FileConfig {
 	// cannot use cases.Title as it will lowercase MyService to Myservice
 	if len(srcTypeName) > 0 {
 		srcTypeName = strings.ToUpper(string(srcTypeName[0])) + srcTypeName[1:]
@@ -37,6 +41,8 @@ func NewFileConfig(srcTypeName, outTypeName string, methods []*method.Method) *F
 	return &FileConfig{
 		srcTypeName: srcTypeName,
 		outTypeName: outTypeName,
+		typeParams:  typeParams,
+		typeArgs:    typeArgs,
 		methods:     methods,
 	}
 }
@@ -136,22 +142,22 @@ func generateFile(outPkg string, ignoreNoReturnMethods bool, fileCfg *FileConfig
 	for _, meth := range methods {
 		declMethods = append(declMethods, jen.Id(meth.Name).Params(meth.ParametersNameAndType...).Params(meth.ReturnTypes...))
 	}
-	f.Add(jen.Type().Id(fileCfg.targetName()).Interface(
+	f.Add(jen.Type().Id(fileCfg.targetName()).Types(fileCfg.typeParams...).Interface(
 		declMethods...,
 	))
 
 	// Declare the proxy implementation
-	f.Add(jen.Type().Id(fileCfg.outTypeName).Struct(
+	f.Add(jen.Type().Id(fileCfg.outTypeName).Types(fileCfg.typeParams...).Struct(
 		jen.Op("*").Id("base"),
-		jen.Id("delegate").Id(fileCfg.targetName()),
+		jen.Id("delegate").Id(fileCfg.targetName()).Types(fileCfg.typeArgs...),
 	))
 
 	// Declare the ctor
-	f.Add(jen.Func().Id("New"+fileCfg.outTypeName).Params(
-		jen.Id("delegate").Id(fileCfg.targetName()),
+	f.Add(jen.Func().Id("New"+fileCfg.outTypeName).Types(fileCfg.typeParams...).Params(
+		jen.Id("delegate").Id(fileCfg.targetName()).Types(fileCfg.typeArgs...),
 		jen.Id("runnerFactory").Id("runnerFactory"),
 		jen.Id("options").Op("...").Id("Option"),
-	).Op("*").Id(fileCfg.outTypeName).Block(
+	).Op("*").Id(fileCfg.outTypeName).Types(fileCfg.typeArgs...).Block(
 		// if delegate == nil
 		jen.If(jen.Id("delegate").Op("==").Nil().Block(
 			// panic("...")
@@ -163,7 +169,7 @@ func generateFile(outPkg string, ignoreNoReturnMethods bool, fileCfg *FileConfig
 			jen.Panic(jen.Lit("provided nil runner factory")),
 		)),
 		// c:= &OutTypeName{...}
-		jen.Id("c").Op(":=").Add(jen.Op("&").Id(fileCfg.outTypeName).Values(jen.Dict{
+		jen.Id("c").Op(":=").Add(jen.Op("&").Id(fileCfg.outTypeName).Types(fileCfg.typeArgs...).Values(jen.Dict{
 			// embed the base struct
 			jen.Id("base"): jen.Op("&").Id("base").Values(jen.Dict{
 				jen.Id("errorPredicate"): jen.Id("RetryAllErrors"),
@@ -181,7 +187,7 @@ func generateFile(outPkg string, ignoreNoReturnMethods bool, fileCfg *FileConfig
 	// Declare all of our proxy methods
 	for _, mm := range methods {
 		if mm.ReturnsError {
-			r := retryable.NewRetryable(mm, fileCfg.outTypeName, fileCfg.receiverName())
+			r := retryable.NewRetryable(mm, fileCfg.outTypeName, fileCfg.typeArgs, fileCfg.receiverName())
 			s, err := r.Statement()
 			if err != nil {
 				return "", err
@@ -190,9 +196,9 @@ func generateFile(outPkg string, ignoreNoReturnMethods bool, fileCfg *FileConfig
 		} else {
 			var p statement
 			if ignoreNoReturnMethods {
-				p = passthrough.NewPassThrough(mm, fileCfg.outTypeName, fileCfg.receiverName())
+				p = passthrough.NewPassThrough(mm, fileCfg.outTypeName, fileCfg.typeArgs, fileCfg.receiverName())
 			} else {
-				p = noret.NewNoReturn(mm, fileCfg.outTypeName, fileCfg.receiverName())
+				p = noret.NewNoReturn(mm, fileCfg.outTypeName, fileCfg.typeArgs, fileCfg.receiverName())
 			}
 			s, err := p.Statement()
 			if err != nil {

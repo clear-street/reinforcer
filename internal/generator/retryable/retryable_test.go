@@ -9,6 +9,7 @@ import (
 	"github.com/clear-street/reinforcer/internal/generator/method"
 	"github.com/clear-street/reinforcer/internal/generator/retryable"
 	rtypes "github.com/clear-street/reinforcer/internal/types"
+	"github.com/dave/jennifer/jen"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,11 +18,12 @@ func TestRetryable_Statement(t *testing.T) {
 	ctxVar := types.NewVar(token.NoPos, nil, "ctx", rtypes.ContextType)
 
 	tests := []struct {
-		name       string
-		methodName string
-		signature  *types.Signature
-		want       string
-		wantErr    bool
+		name           string
+		methodName     string
+		structTypeArgs []jen.Code
+		signature      *types.Signature
+		want           string
+		wantErr        bool
 	}{
 		{
 			name:       "Function returns error",
@@ -94,13 +96,36 @@ func TestRetryable_Statement(t *testing.T) {
 }`,
 			wantErr: false,
 		},
+		{
+			name:           "Function returns error",
+			methodName:     "MyFunction",
+			structTypeArgs: []jen.Code{jen.Id("T")},
+			signature:      types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(errVar), false),
+			want: `func (r *Resilient[T]) MyFunction() error {
+	var nonRetryableErr error
+	err := r.run(context.Background(), ResilientMethods.MyFunction, func(_ context.Context) error {
+		var err error
+		err = r.delegate.MyFunction()
+		if r.errorPredicate(ResilientMethods.MyFunction, err) {
+			return err
+		}
+		nonRetryableErr = err
+		return nil
+	})
+	if nonRetryableErr != nil {
+		return nonRetryableErr
+	}
+	return err
+}`,
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m, err := method.ParseMethod(tt.methodName, tt.signature)
 			require.NoError(t, err)
-			ret := retryable.NewRetryable(m, "Resilient", "r")
+			ret := retryable.NewRetryable(m, "Resilient", tt.structTypeArgs, "r")
 			buf := &bytes.Buffer{}
 			s, err := ret.Statement()
 			if tt.wantErr {
@@ -121,7 +146,7 @@ func TestRetryable_Statement(t *testing.T) {
 		require.Panics(t, func() {
 			m, err := method.ParseMethod("Fn", types.NewSignatureType(nil, nil, nil, types.NewTuple(), types.NewTuple(), false))
 			require.NoError(t, err)
-			retryable.NewRetryable(m, "Resilient", "r")
+			retryable.NewRetryable(m, "Resilient", nil, "r")
 		})
 	})
 }

@@ -98,7 +98,7 @@ type Service interface {
 
 import "context"
 
-type service struct {	
+type service struct {
 }
 
 func (s *service) GetUserID(ctx context.Context, userID string) (string, error) {
@@ -119,6 +119,88 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 		require.Equal(t, "service", svc.Name)
 		require.Equal(t, 1, len(svc.Methods))
 		require.Equal(t, "GetUserID", svc.Methods[0].Name)
+	})
+
+	t.Run("Load struct with method with generic typed argument", func(t *testing.T) {
+		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
+			Name: "github.com/clear-street",
+			Files: map[string]interface{}{
+				"fake/fake.go": `package fake
+
+type genericType[T any] struct {
+	value T
+}
+
+type genericService struct{}
+
+func (g *genericService) DoTheThing(t genericType[string]) (string, error) { return t.value, nil }
+`,
+			}}})
+		defer exported.Cleanup()
+
+		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			exported.Config.Mode = cfg.Mode
+			return packages.Load(exported.Config, patterns...)
+		})
+
+		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
+		require.NoError(t, err)
+		require.NotNil(t, svc)
+		require.Equal(t, "genericService", svc.Name)
+		require.Equal(t, 1, len(svc.Methods))
+		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
+	})
+
+	t.Run("Load struct with generic type param", func(t *testing.T) {
+		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
+			Name: "github.com/clear-street",
+			Files: map[string]interface{}{
+				"fake/fake.go": `package fake
+
+type genericService[T any] struct{}
+
+func (g *genericService[T]) DoTheThing() (string, error) { return "yep", nil }
+`,
+			}}})
+		defer exported.Cleanup()
+
+		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			exported.Config.Mode = cfg.Mode
+			return packages.Load(exported.Config, patterns...)
+		})
+
+		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
+		require.NoError(t, err)
+		require.NotNil(t, svc)
+		require.Equal(t, "genericService", svc.Name)
+		require.Equal(t, 1, len(svc.Methods))
+		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
+	})
+
+	t.Run("Load struct with generic type param list", func(t *testing.T) {
+		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
+			Name: "github.com/clear-street",
+			Files: map[string]interface{}{
+				"fake/fake.go": `package fake
+
+type genericService[T any, U any] struct{}
+
+func (g *genericService[T, U]) DoTheThing() (string, error) { return "yep", nil }
+`,
+			}}})
+		defer exported.Cleanup()
+
+		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			exported.Config.Mode = cfg.Mode
+			return packages.Load(exported.Config, patterns...)
+		})
+
+		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
+		require.NoError(t, err)
+		require.NotNil(t, svc)
+		require.Equal(t, "genericService", svc.Name)
+		require.Equal(t, 1, len(svc.Methods))
+		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
 	})
 }
 

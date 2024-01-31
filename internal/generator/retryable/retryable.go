@@ -14,21 +14,23 @@ const (
 
 // Retryable is a code generator for a method that can be retried on error
 type Retryable struct {
-	method       *method.Method
-	structName   string
-	receiverName string
+	method         *method.Method
+	structName     string
+	structTypeArgs []jen.Code
+	receiverName   string
 }
 
 // NewRetryable is a constructor for Retryable, the given method must be an error-returning method
-func NewRetryable(method *method.Method, structName string, receiverName string) *Retryable {
+func NewRetryable(method *method.Method, structName string, structTypeArgs []jen.Code, receiverName string) *Retryable {
 	if !method.ReturnsError {
 		panic("method does not return an error and is thus not retryable")
 	}
 
 	return &Retryable{
-		method:       method,
-		structName:   structName,
-		receiverName: receiverName,
+		method:         method,
+		structName:     structName,
+		structTypeArgs: structTypeArgs,
+		receiverName:   receiverName,
 	}
 }
 
@@ -38,7 +40,7 @@ func (r *Retryable) Statement() (*jen.Statement, error) {
 	if err != nil {
 		return nil, err
 	}
-	return jen.Func().Params(jen.Id(r.receiverName).Op("*").Id(r.structName)).Id(r.method.Name).Call(r.method.ParametersNameAndType...).Params(r.method.ReturnTypes...).Block(
+	return jen.Func().Params(jen.Id(r.receiverName).Op("*").Id(r.structName).Types(r.structTypeArgs...)).Id(r.method.Name).Call(r.method.ParametersNameAndType...).Params(r.method.ReturnTypes...).Block(
 		methodCallStatements...,
 	), nil
 }

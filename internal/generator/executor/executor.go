@@ -111,7 +111,7 @@ func createFileConfigs(discoveredSet map[string]struct{}, match map[string]*load
 			return nil, errors.Errorf("multiple types with same name discovered with name %s", typName)
 		}
 		discoveredSet[typName] = struct{}{}
-		cfg = append(cfg, generator.NewFileConfig(typName, typName, res.Methods))
+		cfg = append(cfg, generator.NewFileConfig(typName, typName, res.TypeParams, res.TypeArgs, res.Methods))
 	}
 	return cfg, nil
 }
