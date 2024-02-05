@@ -105,8 +105,6 @@ func Generate(cfg Config) (*Generated, error) {
 		Common: c,
 	}
 
-	var fileMethods []*fileMeta
-
 	for _, fileConfig := range cfg.Files {
 		methods := fileConfig.methods
 		s, err := generateFile(cfg.OutPkg, cfg.IgnoreNoReturnMethods, fileConfig, methods)
@@ -117,7 +115,6 @@ func Generate(cfg Config) (*Generated, error) {
 			TypeName: fileConfig.outTypeName,
 			Contents: s,
 		})
-		fileMethods = append(fileMethods, &fileMeta{fileConfig: fileConfig, methods: methods})
 	}
 
 	return gen, nil
