@@ -86,8 +86,6 @@ type fileMeta struct {
 type Generated struct {
 	// Common is the golang code that is shared across all generated types
 	Common string
-	// Constants is the golang code that holds constants for compile-time safe references to the proxied methods
-	Constants string
 	// Files is the golang code that was generated for every type that was processed
 	Files []*GeneratedFile
 }
@@ -122,12 +120,6 @@ func Generate(cfg Config) (*Generated, error) {
 		fileMethods = append(fileMethods, &fileMeta{fileConfig: fileConfig, methods: methods})
 	}
 
-	consts, err := generateConstants(cfg.OutPkg, fileMethods)
-	if err != nil {
-		return nil, err
-	}
-	gen.Constants = consts
-
 	return gen, nil
 }
 
@@ -136,6 +128,25 @@ func Generate(cfg Config) (*Generated, error) {
 func generateFile(outPkg string, ignoreNoReturnMethods bool, fileCfg *FileConfig, methods []*method.Method) (string, error) {
 	f := jen.NewFile(outPkg)
 	f.HeaderComment(fileHeader)
+
+	// Compile-time constants
+	var fields []jen.Code
+	var constantAssign []jen.Code
+	for _, m := range methods {
+		fields = append(fields, jen.Id(m.Name).Id("string"))
+		constantAssign = append(constantAssign, jen.Id(m.Name).Op(":").Lit(m.Name).Op(","))
+	}
+
+	constObjName := fmt.Sprintf("%sMethods", fileCfg.outTypeName)
+	log.Debug().Msgf("Adding constants for type %s", fileCfg.outTypeName)
+	f.Add(jen.Comment(fmt.Sprintf("%s are the methods in %s", constObjName, fileCfg.outTypeName)))
+	f.Add(
+		jen.Var().Id(constObjName).Op("=").Struct(
+			fields...,
+		).Block(
+			constantAssign...,
+		),
+	)
 
 	// Declare the target interface we are proxying
 	var declMethods []jen.Code
@@ -248,33 +259,6 @@ func generateCommon(outPkg string) (string, error) {
 	).Id("error").Block(
 		jen.Return(jen.Id("b").Dot("runnerFactory").Dot("GetRunner").Call(jen.Id("name")).Dot("Run").Call(jen.Id("ctx"), jen.Id("fn"))),
 	))
-	return renderToString(f)
-}
-
-func generateConstants(outPkg string, meta []*fileMeta) (string, error) {
-	f := jen.NewFile(outPkg)
-	f.HeaderComment(fileHeader)
-
-	for _, fm := range meta {
-		var fields []jen.Code
-		var constantAssign []jen.Code
-		for _, m := range fm.methods {
-			fields = append(fields, jen.Id(m.Name).Id("string"))
-			constantAssign = append(constantAssign, jen.Id(m.Name).Op(":").Lit(m.Name).Op(","))
-		}
-
-		constObjName := fmt.Sprintf("%sMethods", fm.fileConfig.outTypeName)
-		log.Debug().Msgf("Adding constants for type %s", fm.fileConfig.outTypeName)
-		f.Add(jen.Comment(fmt.Sprintf("%s are the methods in %s", constObjName, fm.fileConfig.outTypeName)))
-		f.Add(
-			jen.Var().Id(constObjName).Op("=").Struct(
-				fields...,
-			).Block(
-				constantAssign...,
-			),
-		)
-	}
-
 	return renderToString(f)
 }
 

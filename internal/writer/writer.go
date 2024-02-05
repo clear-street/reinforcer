@@ -33,10 +33,6 @@ func (w *Writer) Write(outputDirectory string, generated *generator.Generated) e
 		return err
 	}
 
-	if err := w.writeTo(path.Join(outputDirectory, "reinforcer_constants.go"), generated.Constants); err != nil {
-		return err
-	}
-
 	for _, codegen := range generated.Files {
 		filePath := path.Join(outputDirectory, w.fileNameStrategy.GenerateFileName(codegen.TypeName)+".go")
 		if err := w.writeTo(filePath, codegen.Contents); err != nil {
