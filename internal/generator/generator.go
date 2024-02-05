@@ -77,11 +77,6 @@ type statement interface {
 	Statement() (*jen.Statement, error)
 }
 
-type fileMeta struct {
-	fileConfig *FileConfig
-	methods    []*method.Method
-}
-
 // Generated contains the code generation out for all the processed types
 type Generated struct {
 	// Common is the golang code that is shared across all generated types
