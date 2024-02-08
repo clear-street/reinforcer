@@ -21,3 +21,5 @@
 .DS_Store
 
 .history
+
+/dist
