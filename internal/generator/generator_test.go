@@ -72,6 +72,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -213,6 +214,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -409,6 +411,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -530,6 +533,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -645,6 +649,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -794,6 +799,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -906,6 +912,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
+	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
