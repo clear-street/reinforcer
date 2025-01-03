@@ -49,6 +49,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -72,7 +73,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -191,6 +192,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -214,7 +216,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -388,6 +390,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -411,7 +414,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -510,6 +513,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -533,7 +537,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -626,6 +630,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -649,7 +654,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -776,6 +781,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -799,7 +805,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,
@@ -889,6 +895,7 @@ package resilient
 
 import (
 	"context"
+	runner "github.com/clear-street/reinforcer/pkg/runner"
 	goresilience "github.com/slok/goresilience"
 )
 
@@ -912,7 +919,7 @@ func WithRetryableErrorPredicate(fn func(string, error) bool) Option {
 	}
 }
 func (b *base) run(ctx context.Context, name string, fn func(ctx context.Context) error) error {
-	ctx = context.WithValue(ctx, "reinforcer.action_name", name)
+	ctx = context.WithValue(ctx, runner.ActionNameKey{}, name)
 	return b.runnerFactory.GetRunner(name).Run(ctx, fn)
 }
 `,

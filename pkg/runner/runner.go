@@ -7,7 +7,7 @@ import (
 )
 
 // ActionNameKey is the key used to store the action name in the context.
-const ActionNameKey = "reinforcer.action_name"
+type ActionNameKey struct{}
 
 // Factory of runners
 type Factory struct {
