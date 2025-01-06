@@ -1,9 +1,13 @@
 package runner
 
 import (
-	"github.com/slok/goresilience"
 	"sync"
+
+	"github.com/slok/goresilience"
 )
+
+// ActionNameKey is the key used to store the action name in the context.
+type ActionNameKey struct{}
 
 // Factory of runners
 type Factory struct {
