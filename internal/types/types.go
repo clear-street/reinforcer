@@ -135,7 +135,7 @@ func ToType(t types.Type, variadic bool) (jen.Code, error) {
 			return nil, err
 		}
 		return jen.Op("*").Add(rt), nil
-	case *types.Interface:
+	case *types.Interface, *types.Alias:
 		return jen.Id("any"), nil
 	case *types.Slice:
 		elemType, err := ToType(v.Elem(), false)
