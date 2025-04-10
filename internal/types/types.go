@@ -62,10 +62,11 @@ func IsContextType(t types.Type) bool {
 	if t == nil {
 		return false
 	}
+	t = types.Unalias(t)
 	if t.String() == "context.Context" {
 		return true
 	}
-	return types.Implements(t, ContextType)
+	return types.Implements(types.Unalias(t), ContextType)
 }
 
 // variadicToType generates the representation for a variadic type "...MyType"
@@ -135,7 +136,9 @@ func ToType(t types.Type, variadic bool) (jen.Code, error) {
 			return nil, err
 		}
 		return jen.Op("*").Add(rt), nil
-	case *types.Interface, *types.Alias:
+	case *types.Alias:
+		return ToType(types.Unalias(v), false)
+	case *types.Interface:
 		return jen.Id("any"), nil
 	case *types.Slice:
 		elemType, err := ToType(v.Elem(), false)
