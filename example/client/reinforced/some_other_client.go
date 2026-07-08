@@ -9,11 +9,26 @@ import (
 	"os"
 )
 
+// SomeOtherClientMethods are the methods in SomeOtherClient
+var SomeOtherClientMethods = struct {
+	DoStuff            string
+	GetUser            string
+	MethodWithChannel  string
+	MethodWithWildcard string
+	SaveFile           string
+}{
+	DoStuff:            "DoStuff",
+	GetUser:            "GetUser",
+	MethodWithChannel:  "MethodWithChannel",
+	MethodWithWildcard: "MethodWithWildcard",
+	SaveFile:           "SaveFile",
+}
+
 type targetSomeOtherClient interface {
 	DoStuff() error
 	GetUser(ctx context.Context) (*sub.User, error)
 	MethodWithChannel(arg0 <-chan bool) error
-	MethodWithWildcard(arg0 interface{})
+	MethodWithWildcard(arg0 any)
 	SaveFile(arg0 *client.File, arg1 *os.File) error
 }
 type SomeOtherClient struct {
@@ -89,7 +104,7 @@ func (s *SomeOtherClient) MethodWithChannel(arg0 <-chan bool) error {
 	}
 	return err
 }
-func (s *SomeOtherClient) MethodWithWildcard(arg0 interface{}) {
+func (s *SomeOtherClient) MethodWithWildcard(arg0 any) {
 	err := s.run(context.Background(), SomeOtherClientMethods.MethodWithWildcard, func(_ context.Context) error {
 		s.delegate.MethodWithWildcard(arg0)
 		return nil

@@ -4,6 +4,15 @@ package reinforced
 
 import "context"
 
+// ClientMethods are the methods in Client
+var ClientMethods = struct {
+	GenerateGreeting string
+	SayHello         string
+}{
+	GenerateGreeting: "GenerateGreeting",
+	SayHello:         "SayHello",
+}
+
 type targetClient interface {
 	GenerateGreeting(ctx context.Context, arg1 string) (string, error)
 	SayHello(ctx context.Context, arg1 string) error
