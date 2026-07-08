@@ -268,3 +268,50 @@ func TestNewMethod(t *testing.T) {
 		})
 	}
 }
+
+func unconvertibleParamSignature() *types.Signature {
+	return types.NewSignatureType(nil, nil, nil,
+		types.NewTuple(types.NewVar(token.NoPos, nil, "arg0", types.NewArray(types.Typ[types.String], 3))),
+		types.NewTuple(),
+		false,
+	)
+}
+
+func TestParseMethod_ParameterConversionError(t *testing.T) {
+	m, err := method.ParseMethod("Fn", unconvertibleParamSignature())
+	require.Error(t, err)
+	require.Nil(t, m)
+}
+
+func TestParseMethod_ReturnConversionPanics(t *testing.T) {
+	sig := types.NewSignatureType(nil, nil, nil,
+		types.NewTuple(),
+		types.NewTuple(types.NewVar(token.NoPos, nil, "", types.NewArray(types.Typ[types.String], 3))),
+		false,
+	)
+
+	require.Panics(t, func() {
+		_, _ = method.ParseMethod("Fn", sig)
+	})
+}
+
+func TestParseMethod_MultipleErrorReturns(t *testing.T) {
+	sig := types.NewSignatureType(nil, nil, nil,
+		types.NewTuple(),
+		types.NewTuple(
+			types.NewVar(token.NoPos, nil, "", rtypes.ErrType),
+			types.NewVar(token.NoPos, nil, "", rtypes.ErrType),
+		),
+		false,
+	)
+
+	m, err := method.ParseMethod("Fn", sig)
+	require.Nil(t, m)
+	require.EqualError(t, err, "multiple errors returned by method signature")
+}
+
+func TestMustParseMethod_Panics(t *testing.T) {
+	require.Panics(t, func() {
+		_ = method.MustParseMethod("Fn", unconvertibleParamSignature())
+	})
+}

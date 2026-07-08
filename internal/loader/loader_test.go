@@ -152,6 +152,50 @@ func (g *genericService[T]) DoTheThing() (string, error) { return "yep", nil }
 		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
 	})
 
+	t.Run("Load generic interface", func(t *testing.T) {
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
+
+type Service[T any] interface {
+	DoTheThing() (string, error)
+}
+`,
+		})
+
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			cfg.Mode = reqCfg.Mode
+			return packages.Load(cfg, patterns...)
+		})
+
+		svc, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
+		require.NoError(t, err)
+		require.NotNil(t, svc)
+		require.Equal(t, "Service", svc.Name)
+		require.Equal(t, 1, len(svc.TypeParams))
+		require.Equal(t, 1, len(svc.TypeArgs))
+		require.Equal(t, 1, len(svc.Methods))
+		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
+	})
+
+	t.Run("Load interface method with unconvertible parameter type errors", func(t *testing.T) {
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
+
+type Service interface {
+	DoTheThing(arg [3]int) string
+}
+`,
+		})
+
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			cfg.Mode = reqCfg.Mode
+			return packages.Load(cfg, patterns...)
+		})
+
+		_, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
+		require.Error(t, err)
+	})
+
 	t.Run("Load struct with generic type param list", func(t *testing.T) {
 		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
 			"fake/fake.go": `package fake
