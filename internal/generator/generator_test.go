@@ -7,9 +7,9 @@ import (
 
 	"github.com/clear-street/reinforcer/internal/generator"
 	"github.com/clear-street/reinforcer/internal/loader"
+	"github.com/clear-street/reinforcer/internal/testutil"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/go/packages"
-	"golang.org/x/tools/go/packages/packagestest"
 )
 
 type input struct {
@@ -1142,23 +1142,16 @@ func (g *GeneratedService[T]) SayHello(arg0 T) error {
 
 func loadInterface(t *testing.T, filesCode map[string]input) []*generator.FileConfig {
 	pkg := "github.com/clear-street/fake/unresilient"
-	m := map[string]interface{}{}
+	m := map[string]string{}
 	for fileName, in := range filesCode {
 		m[fileName] = in.code
 	}
 
-	mods := []packagestest.Module{
-		{
-			Name:  pkg,
-			Files: m,
-		},
-	}
-	exported := packagestest.Export(t, packagestest.GOPATH, mods)
-	defer exported.Cleanup()
+	cfg := testutil.WriteModule(t, pkg, m)
 
-	l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-		exported.Config.Mode = cfg.Mode
-		return packages.Load(exported.Config, patterns...)
+	l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+		cfg.Mode = reqCfg.Mode
+		return packages.Load(cfg, patterns...)
 	})
 
 	var loadedTypes []*generator.FileConfig
