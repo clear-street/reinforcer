@@ -1,21 +1,20 @@
 package loader_test
 
 import (
+	"path/filepath"
+
 	"github.com/clear-street/reinforcer/internal/loader"
+	"github.com/clear-street/reinforcer/internal/testutil"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/go/packages"
-	"golang.org/x/tools/go/packages/packagestest"
 
 	"testing"
 )
 
 func TestLoad(t *testing.T) {
 	t.Run("Loads type from targeted file", func(t *testing.T) {
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{
-			{
-				Name: "github.com/clear-street",
-				Files: map[string]interface{}{
-					"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 import "context"
 
@@ -23,12 +22,7 @@ type Service interface {
 	GetUserID(ctx context.Context, userID string) (string, error)
 }
 `,
-				},
-			},
-			{
-				Name: "github.com/clear-street",
-				Files: map[string]interface{}{
-					"fake/other.go": `package fake
+			"fake/other.go": `package fake
 
 import "context"
 
@@ -36,17 +30,15 @@ type OtherService interface {
 	GetSomeOtherUserID(ctx context.Context, userID string) (string, error)
 }
 `,
-				},
-			},
-		})
-		defer exported.Cleanup()
-
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
 		})
 
-		results, err := l.LoadAll(exported.File("github.com/clear-street", "fake/fake.go"), loader.FileLoadMode)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
+		})
+
+		results, err := l.LoadAll(filepath.Join(cfg.Dir, "fake/fake.go"), loader.FileLoadMode)
 		require.NoError(t, err)
 		require.Equal(t, 1, len(results))
 		svc, ok := results["Service"]
@@ -59,12 +51,8 @@ type OtherService interface {
 	})
 
 	t.Run("Load Interface", func(t *testing.T) {
-
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{
-			{
-				Name: "github.com/clear-street",
-				Files: map[string]interface{}{
-					"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 import "context"
 
@@ -72,14 +60,12 @@ type Service interface {
 	GetUserID(ctx context.Context, userID string) (string, error)
 }
 `,
-				},
-			},
 		})
-		defer exported.Cleanup()
 
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
@@ -91,10 +77,8 @@ type Service interface {
 	})
 
 	t.Run("Load Struct", func(t *testing.T) {
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-			Name: "github.com/clear-street",
-			Files: map[string]interface{}{
-				"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 import "context"
 
@@ -105,12 +89,12 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 	return "My User", nil
 }
 `,
-			}}})
-		defer exported.Cleanup()
+		})
 
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "service", loader.PackageLoadMode)
@@ -122,10 +106,8 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 	})
 
 	t.Run("Load struct with method with generic typed argument", func(t *testing.T) {
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-			Name: "github.com/clear-street",
-			Files: map[string]interface{}{
-				"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 type genericType[T any] struct {
 	value T
@@ -135,12 +117,12 @@ type genericService struct{}
 
 func (g *genericService) DoTheThing(t genericType[string]) (string, error) { return t.value, nil }
 `,
-			}}})
-		defer exported.Cleanup()
+		})
 
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -152,21 +134,19 @@ func (g *genericService) DoTheThing(t genericType[string]) (string, error) { ret
 	})
 
 	t.Run("Load struct with generic type param", func(t *testing.T) {
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-			Name: "github.com/clear-street",
-			Files: map[string]interface{}{
-				"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 type genericService[T any] struct{}
 
 func (g *genericService[T]) DoTheThing() (string, error) { return "yep", nil }
 `,
-			}}})
-		defer exported.Cleanup()
+		})
 
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -177,22 +157,66 @@ func (g *genericService[T]) DoTheThing() (string, error) { return "yep", nil }
 		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
 	})
 
+	t.Run("Load generic interface", func(t *testing.T) {
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
+
+type Service[T any] interface {
+	DoTheThing() (string, error)
+}
+`,
+		})
+
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
+		})
+
+		svc, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
+		require.NoError(t, err)
+		require.NotNil(t, svc)
+		require.Equal(t, "Service", svc.Name)
+		require.Equal(t, 1, len(svc.TypeParams))
+		require.Equal(t, 1, len(svc.TypeArgs))
+		require.Equal(t, 1, len(svc.Methods))
+		require.Equal(t, "DoTheThing", svc.Methods[0].Name)
+	})
+
+	t.Run("Load interface method with unconvertible parameter type errors", func(t *testing.T) {
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
+
+type Service interface {
+	DoTheThing(arg [3]int) string
+}
+`,
+		})
+
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
+		})
+
+		_, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
+		require.Error(t, err)
+	})
+
 	t.Run("Load struct with generic type param list", func(t *testing.T) {
-		exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-			Name: "github.com/clear-street",
-			Files: map[string]interface{}{
-				"fake/fake.go": `package fake
+		cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+			"fake/fake.go": `package fake
 
 type genericService[T any, U any] struct{}
 
 func (g *genericService[T, U]) DoTheThing() (string, error) { return "yep", nil }
 `,
-			}}})
-		defer exported.Cleanup()
+		})
 
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -205,10 +229,8 @@ func (g *genericService[T, U]) DoTheThing() (string, error) { return "yep", nil 
 }
 
 func TestLoadMatched(t *testing.T) {
-	exported := packagestest.Export(t, packagestest.GOPATH, []packagestest.Module{{
-		Name: "github.com/clear-street",
-		Files: map[string]interface{}{
-			"fake/fake.go": `package fake
+	cfg := testutil.WriteModule(t, "github.com/clear-street", map[string]string{
+		"fake/fake.go": `package fake
 
 import "context"
 
@@ -228,13 +250,13 @@ type StructWithNoMethods struct {
 	SomeField string
 }
 `,
-		}}})
-	defer exported.Cleanup()
+	})
 
 	t.Run("RegEx", func(t *testing.T) {
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{".*Service"}, loader.PackageLoadMode)
@@ -256,9 +278,10 @@ type StructWithNoMethods struct {
 	})
 
 	t.Run("Multiple RegEx Expressions", func(t *testing.T) {
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"User.*", "Hello.*Service"}, loader.PackageLoadMode)
@@ -276,9 +299,10 @@ type StructWithNoMethods struct {
 	})
 
 	t.Run("Exact Match", func(t *testing.T) {
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"HelloWorldService"}, loader.PackageLoadMode)
@@ -291,9 +315,10 @@ type StructWithNoMethods struct {
 	})
 
 	t.Run("Exact Match: No Match", func(t *testing.T) {
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"Hello"}, loader.PackageLoadMode)
@@ -303,9 +328,10 @@ type StructWithNoMethods struct {
 	})
 
 	t.Run("Multiple Exact Matches", func(t *testing.T) {
-		l := loader.NewLoader(func(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			exported.Config.Mode = cfg.Mode
-			return packages.Load(exported.Config, patterns...)
+		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"UserService", "HelloWorldService", "StructWithNoMethods"}, loader.PackageLoadMode)

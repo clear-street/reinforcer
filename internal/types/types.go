@@ -118,8 +118,7 @@ func ToType(t types.Type, variadic bool) (jen.Code, error) {
 		}
 		pkgPath := typeName.Pkg().Path()
 		var typeArgs []jen.Code
-		for p := 0; p < v.TypeArgs().Len(); p++ {
-			typeArg := v.TypeArgs().At(p)
+		for typeArg := range v.TypeArgs().Types() {
 			tt, err := ToType(typeArg, false)
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to convert type %v", typeArg)
@@ -172,8 +171,8 @@ func ToType(t types.Type, variadic bool) (jen.Code, error) {
 		}
 
 		var returnTypes []jen.Code
-		for r := 0; r < v.Results().Len(); r++ {
-			returnType := v.Results().At(r).Type()
+		for v0 := range v.Results().Variables() {
+			returnType := v0.Type()
 			tt, err := ToType(returnType, false)
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to convert type %v", returnType)

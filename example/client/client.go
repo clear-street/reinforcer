@@ -28,7 +28,7 @@ type SomeOtherClient interface {
 	SaveFile(myFile *File, osFile *os.File) error
 	GetUser(ctx context.Context) (*sub.User, error)
 	MethodWithChannel(myChan <-chan bool) error
-	MethodWithWildcard(arg interface{})
+	MethodWithWildcard(arg any)
 }
 
 // Service is an example of a struct defined contract that will be reversed engineered by reinforcer

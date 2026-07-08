@@ -4,6 +4,13 @@ package reinforced
 
 import "context"
 
+// ServiceMethods are the methods in Service
+var ServiceMethods = struct {
+	GetData string
+}{
+	GetData: "GetData",
+}
+
 type targetService interface {
 	GetData() ([]byte, error)
 }

@@ -232,8 +232,7 @@ func loadFromInterface(name string, interfaceType *types.Interface, objType type
 		Name: name,
 	}
 	typeParams := objType.(*types.Named).TypeParams()
-	for p := 0; p < typeParams.Len(); p++ {
-		typeParam := typeParams.At(p)
+	for typeParam := range typeParams.TypeParams() {
 		typeParamName := typeParam.Obj().Name()
 		typ, err := rtypes.ToType(typeParam.Constraint(), false)
 		if err != nil {
@@ -242,8 +241,7 @@ func loadFromInterface(name string, interfaceType *types.Interface, objType type
 		result.TypeParams = append(result.TypeParams, jen.Id(typeParamName).Add(typ))
 		result.TypeArgs = append(result.TypeArgs, jen.Id(typeParamName))
 	}
-	for m := 0; m < interfaceType.NumMethods(); m++ {
-		meth := interfaceType.Method(m)
+	for meth := range interfaceType.Methods() {
 		mm, err := method.ParseMethod(meth.Name(), meth.Type().(*types.Signature))
 		if err != nil {
 			return nil, err

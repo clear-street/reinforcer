@@ -3,6 +3,7 @@ package method
 import (
 	"fmt"
 	"go/types"
+	"slices"
 
 	rtypes "github.com/clear-street/reinforcer/internal/types"
 	"github.com/dave/jennifer/jen"
@@ -48,11 +49,12 @@ func (m *Method) ContextParam() (ctxParamName string, ctxParam jen.Code) {
 // Parameters generates code for parameter names to be used in codegen
 func (m *Method) Parameters() []jen.Code {
 	var params []jen.Code
-	for i, j := 0, len(m.ParameterNames)-1; i < len(m.ParameterNames); i++ {
-		if m.HasVariadic && i == j {
-			params = append(params, jen.Id(m.ParameterNames[i]).Op("..."))
+	lastIndex := len(m.ParameterNames) - 1
+	for i, name := range m.ParameterNames {
+		if m.HasVariadic && i == lastIndex {
+			params = append(params, jen.Id(name).Op("..."))
 		} else {
-			params = append(params, jen.Id(m.ParameterNames[i]))
+			params = append(params, jen.Id(name))
 		}
 	}
 	return params
@@ -77,9 +79,9 @@ func ParseMethod(name string, signature *types.Signature) (*Method, error) {
 	}
 
 	isVariadic := signature.Variadic()
-	numParams := signature.Params().Len()
-	for i, lastIndex := 0, numParams-1; i < numParams; i++ {
-		param := signature.Params().At(i)
+	params := slices.Collect(signature.Params().Variables())
+	lastIndex := len(params) - 1
+	for i, param := range params {
 		if rtypes.IsContextType(param.Type()) {
 			m.HasContext = true
 			m.ContextParameter = new(int)
@@ -97,8 +99,7 @@ func ParseMethod(name string, signature *types.Signature) (*Method, error) {
 			m.ParameterNames = append(m.ParameterNames, paramName)
 		}
 	}
-	for i := 0; i < signature.Results().Len(); i++ {
-		res := signature.Results().At(i)
+	for i, res := range slices.Collect(signature.Results().Variables()) {
 		resType, err := rtypes.ToType(res.Type(), false)
 		if err != nil {
 			panic(err)

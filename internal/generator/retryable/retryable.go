@@ -55,7 +55,7 @@ func (r *Retryable) methodCall() ([]jen.Code, error) {
 	// Declare the return vars
 	returnVars := make([]jen.Code, 0, len(r.method.ReturnTypes))
 
-	for i := 0; i < len(r.method.ReturnTypes); i++ {
+	for i, returnType := range r.method.ReturnTypes {
 		// Use auto-generated names for variables to avoid conflicts with existing names within the signature
 		varName := fmt.Sprintf("r%d", i)
 		if *r.method.ReturnErrorIndex == i {
@@ -69,7 +69,7 @@ func (r *Retryable) methodCall() ([]jen.Code, error) {
 		returnVars = append(returnVars, jen.Id(varName))
 
 		// Declare var for the values to be returned
-		statements = append(statements, jen.Var().Id(varName).Add(r.method.ReturnTypes[i]))
+		statements = append(statements, jen.Var().Id(varName).Add(returnType))
 	}
 
 	ctxParamName, ctxParam := r.method.ContextParam()
