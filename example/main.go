@@ -24,7 +24,7 @@ func main() {
 		// Always retry SayHello, don't retry any other error
 		return s == reinforced.ClientMethods.SayHello
 	}))
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		err := rCl.SayHello(context.Background(), "Christian")
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
