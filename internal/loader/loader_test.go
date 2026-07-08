@@ -33,8 +33,9 @@ type OtherService interface {
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadAll(filepath.Join(cfg.Dir, "fake/fake.go"), loader.FileLoadMode)
@@ -62,8 +63,9 @@ type Service interface {
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
@@ -90,8 +92,9 @@ func (s *service) GetUserID(ctx context.Context, userID string) (string, error) 
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "service", loader.PackageLoadMode)
@@ -117,8 +120,9 @@ func (g *genericService) DoTheThing(t genericType[string]) (string, error) { ret
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -140,8 +144,9 @@ func (g *genericService[T]) DoTheThing() (string, error) { return "yep", nil }
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -163,8 +168,9 @@ type Service[T any] interface {
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
@@ -188,8 +194,9 @@ type Service interface {
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		_, err := l.LoadOne("github.com/clear-street/fake", "Service", loader.PackageLoadMode)
@@ -207,8 +214,9 @@ func (g *genericService[T, U]) DoTheThing() (string, error) { return "yep", nil 
 		})
 
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		svc, err := l.LoadOne("github.com/clear-street/fake", "genericService", loader.PackageLoadMode)
@@ -246,8 +254,9 @@ type StructWithNoMethods struct {
 
 	t.Run("RegEx", func(t *testing.T) {
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{".*Service"}, loader.PackageLoadMode)
@@ -270,8 +279,9 @@ type StructWithNoMethods struct {
 
 	t.Run("Multiple RegEx Expressions", func(t *testing.T) {
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"User.*", "Hello.*Service"}, loader.PackageLoadMode)
@@ -290,8 +300,9 @@ type StructWithNoMethods struct {
 
 	t.Run("Exact Match", func(t *testing.T) {
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"HelloWorldService"}, loader.PackageLoadMode)
@@ -305,8 +316,9 @@ type StructWithNoMethods struct {
 
 	t.Run("Exact Match: No Match", func(t *testing.T) {
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"Hello"}, loader.PackageLoadMode)
@@ -317,8 +329,9 @@ type StructWithNoMethods struct {
 
 	t.Run("Multiple Exact Matches", func(t *testing.T) {
 		l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-			cfg.Mode = reqCfg.Mode
-			return packages.Load(cfg, patterns...)
+			loadCfg := *cfg
+			loadCfg.Mode = reqCfg.Mode
+			return packages.Load(&loadCfg, patterns...)
 		})
 
 		results, err := l.LoadMatched("github.com/clear-street/fake", []string{"UserService", "HelloWorldService", "StructWithNoMethods"}, loader.PackageLoadMode)

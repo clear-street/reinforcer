@@ -9,9 +9,9 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-// minGoDirective mirrors reinforcer's own go.mod floor (go 1.25) so the
+// minGoDirective mirrors reinforcer's own go.mod floor (go 1.25.0) so the
 // fixture module never claims a lower or higher minimum than the real one.
-const minGoDirective = "go 1.25\n"
+const minGoDirective = "go 1.25.0\n"
 
 func WriteModule(t *testing.T, modulePath string, files map[string]string) *packages.Config {
 	t.Helper()

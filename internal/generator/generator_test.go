@@ -1150,8 +1150,9 @@ func loadInterface(t *testing.T, filesCode map[string]input) []*generator.FileCo
 	cfg := testutil.WriteModule(t, pkg, m)
 
 	l := loader.NewLoader(func(reqCfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
-		cfg.Mode = reqCfg.Mode
-		return packages.Load(cfg, patterns...)
+		loadCfg := *cfg
+		loadCfg.Mode = reqCfg.Mode
+		return packages.Load(&loadCfg, patterns...)
 	})
 
 	var loadedTypes []*generator.FileConfig
